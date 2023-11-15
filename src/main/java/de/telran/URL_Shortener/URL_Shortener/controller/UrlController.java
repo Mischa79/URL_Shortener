@@ -21,7 +21,12 @@ public class UrlController {
     @GetMapping("/go/{shortUrl}")
     public String redirect(@PathVariable String shortUrl) {
         String redirectUrl = urlService.getRedirectUrl(shortUrl);
-        return "redirect:" + redirectUrl;
+
+        if (redirectUrl != null) {
+            return "redirect:" + redirectUrl;
+        } else {
+            return "error_page"; // error_page.html для отображения сообщения об ошибке.
+        }
     }
 
     @GetMapping("/create")
