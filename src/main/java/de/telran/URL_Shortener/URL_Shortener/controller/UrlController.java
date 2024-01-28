@@ -2,41 +2,39 @@ package de.telran.URL_Shortener.URL_Shortener.controller;
 
 import de.telran.URL_Shortener.URL_Shortener.service.UrlService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
+
+@RestController
+@RequestMapping("/api")
 public class UrlController {
 
-    private UrlService urlService;
+    private final UrlService urlService;
 
     @Autowired
     public UrlController(UrlService urlService) {
         this.urlService = urlService;
     }
 
+
     @GetMapping("/go/{shortUrl}")
-    public String redirect(@PathVariable String shortUrl) {
+    public ResponseEntity<Object> redirect(@PathVariable String shortUrl) {
         String redirectUrl = urlService.getRedirectUrl(shortUrl);
-
-        if (redirectUrl != null) {
-            return "redirect:" + redirectUrl;
-        } else {
-            return "error_page"; // error_page.html для отображения сообщения об ошибке.
-        }
+        return ResponseEntity.status(HttpStatus.FOUND).location(URI.create(redirectUrl)).build();
     }
 
-    @GetMapping("/create")
-    public String create(
-            @RequestParam(name = "url") String longUrl,
-            Model model
-    ) {
-        String shortUrl = urlService.createShortUrl(longUrl);
-        model.addAttribute("SHORT_URL", shortUrl);
-        model.addAttribute("LONG_URL", longUrl);
-        return "create_url";
+    @PostMapping("/go")
+    public ResponseEntity<Map<String, String>> create(@RequestParam String url) {
+        String shortUrl = urlService.createShortUrl(url);
+        Map<String, String> response = new HashMap<>();
+        response.put("shortUrl", shortUrl);
+        return ResponseEntity.ok(response);
     }
+
+
 }

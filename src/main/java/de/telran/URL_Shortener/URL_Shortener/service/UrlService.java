@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.nio.charset.Charset;
 import java.time.LocalDateTime;
 import java.util.List;
+
 @Service
 public class UrlService {
     private UrlRepository urlRepository;
@@ -20,10 +21,12 @@ public class UrlService {
 
     public String getRedirectUrl(String shortUrl) {
         List<Url> urls = urlRepository.findByShortLink(shortUrl);
-        if (urls.size() > 0)
+        if (!urls.isEmpty()) {
             return urls.get(0).getOriginalUrl();
+        }
         return "redirect:index.html";
     }
+
 
     public String createShortUrl(String longUrl) {
         String shortUrl = Hashing.murmur3_32_fixed(123).hashString(longUrl, Charset.defaultCharset()).toString();
