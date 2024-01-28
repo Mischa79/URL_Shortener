@@ -30,6 +30,7 @@ public class UrlControllerEndToEndTest {
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(responseEntity.getBody()).isNotNull();
         String shortUrl = responseEntity.getBody().getShortUrl();
+        shortUrl = shortUrl.replaceAll(".*/", "");
 
         try {
             Thread.sleep(1000);
@@ -41,6 +42,7 @@ public class UrlControllerEndToEndTest {
         ResponseEntity<Void> redirectResponse = restTemplate.getForEntity("http://localhost:" + port + "/api/go/" + shortUrl, Void.class);
         assertThat(redirectResponse.getStatusCode()).isEqualTo(HttpStatus.FOUND);
         assertThat(redirectResponse.getHeaders().getLocation().toString()).isEqualTo(longUrl);
+
     }
 
     static class UrlResponse {
