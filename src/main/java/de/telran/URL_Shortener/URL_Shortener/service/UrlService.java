@@ -32,7 +32,7 @@ public class UrlService {
         String shortUrl = Hashing.murmur3_32_fixed(123).hashString(longUrl, Charset.defaultCharset()).toString();
         Url url = new Url(longUrl, shortUrl, LocalDateTime.now());
         urlRepository.save(url);
-        return "http://localhost:8080/go/" + shortUrl;
+        return "http://localhost:8080/api/go" + shortUrl;
     }
 }
 
